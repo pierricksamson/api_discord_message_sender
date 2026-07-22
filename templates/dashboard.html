@@ -10,6 +10,18 @@
   </div>
 </section>
 
+{% if new_key_error %}
+<section class="wrap">
+  <div class="alert alert-danger">{{ new_key_error }}</div>
+</section>
+{% endif %}
+
+{% if delete_error %}
+<section class="wrap">
+  <div class="alert alert-danger">{{ delete_error }}</div>
+</section>
+{% endif %}
+
 {% if new_key %}
 <section class="wrap">
   <div class="alert alert-success">
@@ -29,9 +41,14 @@
       <h2 data-i18n="dash_keys_title">Clés API</h2>
     </div>
 
+    <p class="key-limit-info mono">
+      {{ active_keys_count }} / {{ max_keys }} <span data-i18n="dash_keys_limit_label">clé(s) active(s)</span>
+    </p>
+
     <form class="inline-form" method="post" action="{{ url_for('create_key') }}">
       <input type="text" name="name" placeholder="Nom de la clé (ex: serveur prod)" data-i18n-placeholder="dash_keys_placeholder" maxlength="60">
-      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_generate">Générer</button>
+      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_generate"
+              {{ 'disabled' if active_keys_count >= max_keys else '' }}>Générer</button>
     </form>
 
     {% if keys %}
@@ -100,6 +117,35 @@
     {% endif %}
   </div>
 
+</section>
+
+<section class="wrap">
+  <div class="panel panel-danger">
+    <div class="panel-head">
+      <h2 data-i18n="dash_danger_title">Zone dangereuse</h2>
+    </div>
+    <p data-i18n="dash_danger_desc">
+      Supprime définitivement votre compte, vos clés API et tout votre historique de
+      notifications. Cette action est irréversible.
+    </p>
+
+    <details class="danger-details">
+      <summary class="btn btn-danger btn-sm" data-i18n="btn_delete_account">Supprimer toutes mes données</summary>
+
+      <form class="delete-form" method="post" action="{{ url_for('delete_account') }}"
+            onsubmit="return confirm('Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?');">
+
+        <label class="delete-label" data-i18n="dash_confirm_label">
+          Tapez SUPPRIMER pour confirmer
+        </label>
+        <input type="text" name="confirm_text" autocomplete="off" placeholder="SUPPRIMER" required>
+
+        <button class="btn btn-danger" type="submit" data-i18n="btn_confirm_delete">
+          Confirmer la suppression définitive
+        </button>
+      </form>
+    </details>
+  </div>
 </section>
 
 {% endblock %}

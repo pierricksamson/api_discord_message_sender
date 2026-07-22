@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Admin — Relay{% endblock %}
+{% block content %}
+
+<section class="wrap dash-head">
+  <div>
+    <h1 class="dash-name" data-i18n="admin_title">Dashboard admin</h1>
+    <p class="dash-id mono" data-i18n="admin_subtitle">Vue d'ensemble et réglages globaux</p>
+  </div>
+</section>
+
+<section class="wrap admin-stats-grid">
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.total_users }}</span>
+    <span class="stat-label" data-i18n="admin_stat_users">Utilisateurs</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.active_keys }}</span>
+    <span class="stat-label" data-i18n="admin_stat_active_keys">Clés actives</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.revoked_keys }}</span>
+    <span class="stat-label" data-i18n="admin_stat_revoked_keys">Clés révoquées</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.total_sent }}</span>
+    <span class="stat-label" data-i18n="admin_stat_sent">Notifs envoyées</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.total_failed }}</span>
+    <span class="stat-label" data-i18n="admin_stat_failed">Notifs échouées</span>
+  </div>
+</section>
+
+<section class="wrap dash-grid">
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2 data-i18n="admin_chart_title">Notifications (14 derniers jours)</h2>
+    </div>
+
+    {% if stats.daily %}
+      {% set sent_values = stats.daily | map(attribute='sent') | list %}
+      {% set failed_values = stats.daily | map(attribute='failed') | list %}
+      {% set peak = ([sent_values | max, failed_values | max, 1]) | max %}
+      <div class="bar-chart">
+        {% for d in stats.daily %}
+        <div class="bar-col" title="{{ d.day }} — {{ d.sent }} envoyées, {{ d.failed }} échouées">
+          <div class="bar-stack">
+            <span class="bar bar-sent" style="height: {{ (d.sent / peak * 100) | round(1) }}%"></span>
+            <span class="bar bar-failed" style="height: {{ (d.failed / peak * 100) | round(1) }}%"></span>
+          </div>
+          <span class="bar-label mono">{{ d.day[5:] }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="bar-legend">
+        <span><i class="legend-dot legend-sent"></i> <span data-i18n="admin_legend_sent">Envoyées</span></span>
+        <span><i class="legend-dot legend-failed"></i> <span data-i18n="admin_legend_failed">Échouées</span></span>
+      </div>
+    {% else %}
+    <p class="empty-state" data-i18n="admin_no_data">Pas encore de données sur cette période.</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2 data-i18n="admin_settings_title">Réglages globaux</h2>
+    </div>
+    <form class="settings-form" method="post" action="{{ url_for('admin_update_settings') }}">
+      <label data-i18n="admin_setting_rate_limit">Limite d'envois par minute (par utilisateur)</label>
+      <input type="number" name="rate_limit_per_minute" min="0" value="{{ rate_limit }}">
+
+      <label data-i18n="admin_setting_max_keys">Nombre max de clés API actives par utilisateur</label>
+      <input type="number" name="max_api_keys_per_user" min="1" value="{{ max_keys }}">
+
+      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_save_settings">Enregistrer</button>
+    </form>
+  </div>
+
+</section>
+
+<section class="wrap">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 data-i18n="admin_users_title">Utilisateurs</h2>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th data-i18n="th_username">Pseudo</th>
+          <th data-i18n="th_discord_id">Discord ID</th>
+          <th data-i18n="th_keys">Clés actives</th>
+          <th data-i18n="th_notifs">Notifs</th>
+          <th data-i18n="th_admin">Admin</th>
+          <th data-i18n="th_created">Créé</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users_overview %}
+        <tr>
+          <td>{{ u['username'] }}</td>
+          <td class="mono">{{ u['discord_id'] }}</td>
+          <td>{{ u['active_keys'] }}</td>
+          <td>{{ u['total_notifications'] }}</td>
+          <td>
+            {% if u['admin'] %}<span class="badge badge-online">Admin</span>{% else %}—{% endif %}
+          </td>
+          <td class="mono">{{ u['created_at'][:10] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

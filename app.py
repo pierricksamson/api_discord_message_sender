@@ -1,7 +1,9 @@
+import os
 import secrets
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
+from dotenv import set_key
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
 
 import bot
@@ -37,6 +39,18 @@ def create_app() -> Flask:
 
         return wrapped
 
+    def admin_required(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            user = current_user()
+            if not user:
+                return redirect(url_for("login"))
+            if not user["admin"]:
+                abort(403)
+            return view(*args, **kwargs)
+
+        return wrapped
+
     app.jinja_env.globals["current_user"] = current_user
     app.jinja_env.globals["avatar_url"] = discord_oauth.avatar_url
 
@@ -50,7 +64,9 @@ def create_app() -> Flask:
 
     @app.get("/docs")
     def docs():
-        return render_template("docs.html", base_url=Config.BASE_URL, limit=Config.RATE_LIMIT_PER_MINUTE)
+        return render_template(
+            "docs.html", base_url=Config.BASE_URL, limit=db.get_rate_limit_per_minute()
+        )
 
     # -----------------------------------------------------------------
     # Discord OAuth2
@@ -108,23 +124,53 @@ def create_app() -> Flask:
         keys = db.list_api_keys(user["id"])
         notifications = db.list_notifications(user["id"], limit=Config.HISTORY_PAGE_SIZE)
         new_key = session.pop("new_key", None)
+        new_key_error = session.pop("new_key_error", None)
+        delete_error = session.pop("delete_error", None)
+
         return render_template(
             "dashboard.html",
             user=user,
             keys=keys,
             notifications=notifications,
             new_key=new_key,
+            new_key_error=new_key_error,
+            delete_error=delete_error,
+            max_keys=db.get_max_api_keys_per_user(),
+            active_keys_count=db.count_active_api_keys(user["id"]),
         )
 
     @app.post("/dashboard/keys")
     @login_required
     def create_key():
         user = current_user()
+        max_keys = db.get_max_api_keys_per_user()
+        active = db.count_active_api_keys(user["id"])
+        if active >= max_keys:
+            session["new_key_error"] = (
+                f"Limite atteinte : {max_keys} clé(s) active(s) maximum. "
+                "Révoquez une clé existante avant d'en générer une nouvelle."
+            )
+            return redirect(url_for("dashboard"))
+
         name = (request.form.get("name") or "Default key").strip()[:60] or "Default key"
         plaintext_key = db.generate_api_key(user["id"], name=name)
         # shown once via flash-in-session, never stored in plaintext
         session["new_key"] = plaintext_key
         return redirect(url_for("dashboard"))
+
+    @app.post("/dashboard/delete-account")
+    @login_required
+    def delete_account():
+        user = current_user()
+        confirm_text = (request.form.get("confirm_text") or "").strip().upper()
+
+        if confirm_text != "SUPPRIMER":
+            session["delete_error"] = "Vous devez taper SUPPRIMER pour confirmer."
+            return redirect(url_for("dashboard"))
+
+        db.delete_user_data(user["id"])
+        session.clear()
+        return redirect(url_for("index"))
 
     @app.post("/dashboard/keys/<int:key_id>/revoke")
     @login_required
@@ -158,10 +204,11 @@ def create_app() -> Flask:
         api_key_id = auth["api_key_id"]
         key_prefix = auth["key_prefix"]
 
-        if Config.RATE_LIMIT_PER_MINUTE > 0:
+        rate_limit = db.get_rate_limit_per_minute()
+        if rate_limit > 0:
             since = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
             recent = db.count_recent_notifications(user["id"], since)
-            if recent >= Config.RATE_LIMIT_PER_MINUTE:
+            if recent >= rate_limit:
                 return jsonify(error="Limite de débit atteinte, réessayez dans une minute."), 429
 
         result = bot.send_dm(user["discord_id"], message, key_prefix=key_prefix)
@@ -178,6 +225,43 @@ def create_app() -> Flask:
             return jsonify(error=result.error or "Échec de l'envoi."), 502
 
         return jsonify(status="sent"), 200
+
+    # -----------------------------------------------------------------
+    # Admin
+    # -----------------------------------------------------------------
+
+    @app.get("/admin")
+    @admin_required
+    def admin_dashboard():
+        return render_template(
+            "admin.html",
+            stats=db.get_overview_stats(),
+            users_overview=db.list_users_overview(),
+            rate_limit=db.get_rate_limit_per_minute(),
+            max_keys=db.get_max_api_keys_per_user(),
+        )
+
+    @app.post("/admin/settings")
+    @admin_required
+    def admin_update_settings():
+        rate_limit = (request.form.get("rate_limit_per_minute") or "").strip()
+        max_keys = (request.form.get("max_api_keys_per_user") or "").strip()
+
+        if rate_limit.isdigit():
+            value = int(rate_limit)
+            db.set_setting("rate_limit_per_minute", value)
+            # Garde le .env synchronisé pour que la valeur survive à un redémarrage
+            # même si la table 'settings' venait à être vidée.
+            set_key(Config.ENV_PATH, "RATE_LIMIT_PER_MINUTE", str(value))
+            os.environ["RATE_LIMIT_PER_MINUTE"] = str(value)
+
+        if max_keys.isdigit() and int(max_keys) >= 1:
+            value = int(max_keys)
+            db.set_setting("max_api_keys_per_user", value)
+            set_key(Config.ENV_PATH, "MAX_API_KEYS_PER_USER", str(value))
+            os.environ["MAX_API_KEYS_PER_USER"] = str(value)
+
+        return redirect(url_for("admin_dashboard"))
 
     # -----------------------------------------------------------------
     # Errors

@@ -46,6 +46,9 @@
       {% set u = current_user() %}
       {% if u %}
         <a href="{{ url_for('dashboard') }}" data-i18n="nav_dashboard">Dashboard</a>
+        {% if u['admin'] %}
+        <a href="{{ url_for('admin_dashboard') }}" data-i18n="nav_admin">Admin</a>
+        {% endif %}
         <a class="navuser" href="{{ url_for('dashboard') }}">
           <img src="{{ avatar_url(u['discord_id'], u['avatar']) }}" alt="" class="navavatar">
           <span>{{ u['username'] }}</span>

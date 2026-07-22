@@ -564,3 +564,195 @@ p { color: var(--text-muted); }
   color: var(--accent-strong);
   font-weight: 600;
 }
+
+/* ---------------------------------------------------------------------
+   Limite de clés API
+------------------------------------------------------------------------ */
+
+.key-limit-info {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 0 0 10px;
+}
+
+.inline-form button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------
+   Zone dangereuse (suppression de compte)
+------------------------------------------------------------------------ */
+
+.panel-danger {
+  border-color: var(--danger);
+}
+
+.panel-danger p {
+  margin-top: 0;
+}
+
+.danger-details summary {
+  list-style: none;
+  width: fit-content;
+}
+.danger-details summary::-webkit-details-marker { display: none; }
+
+.delete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 420px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.delete-label {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.delete-form input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.delete-form button {
+  margin-top: 6px;
+  align-self: flex-start;
+}
+
+/* ---------------------------------------------------------------------
+   Admin
+------------------------------------------------------------------------ */
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding: 10px 24px 30px;
+}
+
+@media (max-width: 900px) {
+  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-form label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.settings-form input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.settings-form button {
+  margin-top: 14px;
+  align-self: flex-start;
+}
+
+/* Mini graphique en barres, en CSS pur (pas de dépendance JS externe) */
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+  margin-top: 8px;
+}
+
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 6px;
+}
+
+.bar-stack {
+  position: relative;
+  width: 100%;
+  max-width: 22px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+}
+
+.bar-sent { background: var(--online); }
+.bar-failed { background: var(--danger); }
+
+.bar-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.bar-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.legend-sent { background: var(--online); }
+.legend-failed { background: var(--danger); }
