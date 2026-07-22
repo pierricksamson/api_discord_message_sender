@@ -16,6 +16,7 @@
   --accent: #5865f2;       /* discord blurple */
   --accent-soft: #5865f21a;
   --accent-strong: #7289ff;
+  --python-y: #f7c93e;
   --online: #3ba55c;       /* discord "online" green, delivered state only */
   --online-soft: #3ba55c1a;
   --danger: #ed4245;
@@ -103,7 +104,7 @@ p { color: var(--text-muted); }
 .brand-mark { display: inline-flex; gap: 3px; }
 .brand-mark .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .brand-mark .dot-2 { background: var(--accent-strong); opacity: 0.75; }
-.brand-mark .dot-3 { background: var(--online); opacity: 0.6; }
+.brand-mark .dot-3 { background: var(--python-y); opacity: 0.6; }
 
 .mainnav { display: flex; align-items: center; gap: 20px; }
 .mainnav a { text-decoration: none; color: var(--text-muted); font-size: 0.94rem; }
@@ -179,7 +180,7 @@ p { color: var(--text-muted); }
   position: absolute;
   top: 27px;
   left: 6%;
-  right: 6%;
+  right: 8%;
   height: 2px;
   background-image: linear-gradient(90deg, var(--border) 60%, transparent 0);
   background-size: 14px 2px;
@@ -194,8 +195,8 @@ p { color: var(--text-muted); }
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--online);
-  box-shadow: 0 0 14px 3px #3ba55c88;
+  background: var(--python-y);
+  box-shadow: 0 0 14px 3px var(--python-y);
   animation: relay-travel 3.6s ease-in-out infinite;
 }
 
@@ -209,7 +210,7 @@ p { color: var(--text-muted); }
 
 .relay-stops {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   position: relative;
 }

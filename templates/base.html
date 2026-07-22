@@ -31,7 +31,7 @@
         </a>
         <a class="btn btn-ghost btn-sm" href="{{ url_for('logout') }}">Déconnexion</a>
       {% else %}
-        <a class="btn btn-discord btn-sm" href="{{ url_for('login') }}">Se connecter avec Discord</a>
+        <a class="btn btn-discord" href="{{ url_for('login') }}" style="color: white!important;">Se connecter avec Discord</a>
       {% endif %}
     </nav>
   </div>
