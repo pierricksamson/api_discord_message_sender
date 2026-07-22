@@ -100,5 +100,10 @@
 
   "footer_tagline": "Relay — a notification relay, not a social network.",
   "footer_docs": "Documentation",
-  "footer_trans": "Translated from french"
+  "footer_trans": "Translated from french",
+
+  "modal_cancel": "Cancel",
+  "modal_confirm": "Confirm",
+  "confirm_revoke_key": "Revoke this key? It will stop working immediately.",
+  "confirm_delete_account": "Final confirmation: this will permanently delete your account and all your data. Continue?"
 }

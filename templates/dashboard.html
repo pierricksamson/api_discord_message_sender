@@ -78,7 +78,9 @@
           <td>
             {% if not k['revoked_at'] %}
             <form method="post" action="{{ url_for('revoke_key', key_id=k['id']) }}"
-                  onsubmit="return confirm('Révoquer cette clé ? Elle cessera de fonctionner immédiatement.');">
+                  class="js-confirm-form"
+                  data-confirm-text="confirm_revoke_key"
+                  data-confirm-fallback="Révoquer cette clé ? Elle cessera de fonctionner immédiatement.">
               <button class="btn btn-danger btn-sm" type="submit" data-i18n="btn_revoke">Révoquer</button>
             </form>
             {% endif %}
@@ -132,8 +134,9 @@
     <details class="danger-details">
       <summary class="btn btn-danger btn-sm" data-i18n="btn_delete_account">Supprimer toutes mes données</summary>
 
-      <form class="delete-form" method="post" action="{{ url_for('delete_account') }}"
-            onsubmit="return confirm('Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?');">
+      <form class="delete-form js-confirm-form" method="post" action="{{ url_for('delete_account') }}"
+            data-confirm-text="confirm_delete_account"
+            data-confirm-fallback="Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?">
 
         <label class="delete-label" data-i18n="dash_confirm_label">
           Tapez SUPPRIMER pour confirmer

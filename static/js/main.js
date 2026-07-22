@@ -1,5 +1,8 @@
+// Traductions courantes, accessibles depuis toute la page (ex: modale de confirmation)
+let currentTranslations = {};
+
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Onglets de la page /docs (Python / cURL / JavaScript) ---
+  // --- 1. Onglets de la page /docs (Python / cURL / JavaScript) ---
   document.querySelectorAll("[data-tabs]").forEach((tabs) => {
     const buttons = tabs.querySelectorAll(".tab-btn");
     const panels = tabs.querySelectorAll(".tab-panel");
@@ -13,41 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Bouton "Copier" (clé API révélée dans le dashboard) ---
-  document.querySelectorAll("[data-copy]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const value = btn.getAttribute("data-copy");
-      try {
-        await navigator.clipboard.writeText(value);
-        const original = btn.textContent;
-        btn.textContent = "Copié !";
-        btn.disabled = true;
-        setTimeout(() => {
-          btn.textContent = original;
-          btn.disabled = false;
-        }, 1500);
-      } catch (err) {
-        console.error("Impossible de copier la clé :", err);
-      }
-    });
-  });
-});
-document.addEventListener("DOMContentLoaded", () => {
-  // --- 1. Onglets de la page /docs ---
-  document.querySelectorAll("[data-tabs]").forEach((tabs) => {
-    const buttons = tabs.querySelectorAll(".tab-btn");
-    const panels = tabs.querySelectorAll(".tab-panel");
-
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const target = btn.dataset.tab;
-        buttons.forEach((b) => b.classList.toggle("active", b === btn));
-        panels.forEach((p) => p.classList.toggle("active", p.dataset.panel === target));
-      });
-    });
-  });
-
-  // --- 2. Bouton "Copier" (Clé API) ---
+  // --- 2. Bouton "Copier" (clé API révélée dans le dashboard) ---
   document.querySelectorAll("[data-copy]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const value = btn.getAttribute("data-copy");
@@ -66,13 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- 3. Sélecteur de Langue ---
+  // --- 3. Sélecteur de langue ---
   const toggleBtn = document.getElementById("langToggle");
   const dropdown = document.getElementById("langDropdown");
   const options = document.querySelectorAll(".lang-option");
 
   if (toggleBtn && dropdown) {
-    // Ouvrir / Fermer le menu
+    // Ouvrir / fermer le menu
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       const isOpen = dropdown.classList.toggle("show");
@@ -114,6 +83,60 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLangUI(savedLang, initialOption.dataset.flag);
   }
   loadLanguage(savedLang);
+
+  // --- 5. Modale de confirmation (remplace window.confirm natif) ---
+  const confirmOverlay = document.getElementById("confirmModalOverlay");
+  const confirmMessageEl = document.getElementById("confirmModalMessage");
+  const confirmBtn = document.getElementById("confirmModalConfirm");
+  const cancelBtn = document.getElementById("confirmModalCancel");
+  let pendingForm = null;
+
+  function openConfirmModal(message, form) {
+    pendingForm = form;
+    confirmMessageEl.textContent = message;
+    confirmOverlay.classList.add("show");
+    confirmBtn.focus();
+  }
+
+  function closeConfirmModal() {
+    pendingForm = null;
+    confirmOverlay.classList.remove("show");
+  }
+
+  if (confirmOverlay) {
+    document.querySelectorAll(".js-confirm-form").forEach((form) => {
+      form.addEventListener("submit", (e) => {
+        if (form.dataset.confirmed === "true") return;
+        e.preventDefault();
+        const key = form.dataset.confirmText;
+        const message =
+          (currentTranslations && currentTranslations[key]) ||
+          form.dataset.confirmFallback ||
+          "Êtes-vous sûr ?";
+        openConfirmModal(message, form);
+      });
+    });
+
+    confirmBtn.addEventListener("click", () => {
+      if (pendingForm) {
+        pendingForm.dataset.confirmed = "true";
+        pendingForm.submit();
+      }
+      closeConfirmModal();
+    });
+
+    cancelBtn.addEventListener("click", closeConfirmModal);
+
+    confirmOverlay.addEventListener("click", (e) => {
+      if (e.target === confirmOverlay) closeConfirmModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && confirmOverlay.classList.contains("show")) {
+        closeConfirmModal();
+      }
+    });
+  }
 });
 
 // Met à jour le drapeau et le code dans le bouton
@@ -137,6 +160,7 @@ async function loadLanguage(lang) {
     if (!response.ok) return;
 
     const translations = await response.json();
+    currentTranslations = translations;
 
     // Sauvegarde du choix dans le navigateur
     localStorage.setItem("app_lang", lang);

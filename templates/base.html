@@ -77,6 +77,16 @@
   </div>
 </footer>
 
+<div class="modal-overlay" id="confirmModalOverlay">
+  <div class="modal-box" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage">
+    <p class="modal-message" id="confirmModalMessage"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost btn-sm" id="confirmModalCancel" data-i18n="modal_cancel">Annuler</button>
+      <button type="button" class="btn btn-danger btn-sm" id="confirmModalConfirm" data-i18n="modal_confirm">Confirmer</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% block scripts %}{% endblock %}
