@@ -4,12 +4,11 @@
 
 <section class="wrap docs">
 
-  <p class="eyebrow">Référence API</p>
-  <h1>Un seul endpoint à retenir</h1>
-  <p class="hero-sub docs-intro">
+  <p class="eyebrow" data-i18n="docs_eyebrow">Référence API</p>
+  <h1 data-i18n="docs_title">Un seul endpoint à retenir</h1>
+  <p class="hero-sub docs-intro" data-i18n="docs_intro">
     Relay expose un unique endpoint public. Authentifiez-vous avec la clé
-    générée dans votre <a href="{{ url_for('dashboard') }}">dashboard</a>,
-    envoyez un message, il arrive en DM Discord.
+    générée dans votre dashboard, envoyez un message, il arrive en DM Discord.
   </p>
 
   <div class="endpoint-card">
@@ -18,29 +17,40 @@
       <code>/api/send</code>
     </div>
 
-    <h3>Corps de la requête (JSON)</h3>
+    <h3 data-i18n="docs_body_title">Corps de la requête (JSON)</h3>
     <table class="table table-params">
-      <thead><tr><th>Champ</th><th>Type</th><th>Description</th></tr></thead>
+      <thead>
+        <tr>
+          <th data-i18n="th_field">Champ</th>
+          <th data-i18n="th_type">Type</th>
+          <th data-i18n="th_desc">Description</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td><code>api_key</code></td><td>string</td><td>Clé API générée depuis le dashboard (préfixe <code>pk_</code>).</td></tr>
-        <tr><td><code>message</code></td><td>string</td><td>Contenu du message, 2000 caractères max (limite Discord).</td></tr>
+        <tr><td><code>api_key</code></td><td>string</td><td data-i18n="param_api_key_desc">Clé API générée depuis le dashboard (préfixe <code>pk_</code>).</td></tr>
+        <tr><td><code>message</code></td><td>string</td><td data-i18n="param_message_desc">Contenu du message, 2000 caractères max (limite Discord).</td></tr>
       </tbody>
     </table>
 
-    <h3>Réponses</h3>
+    <h3 data-i18n="docs_responses_title">Réponses</h3>
     <table class="table table-params">
-      <thead><tr><th>Code</th><th>Signification</th></tr></thead>
+      <thead>
+        <tr>
+          <th data-i18n="th_code">Code</th>
+          <th data-i18n="th_meaning">Signification</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td><span class="badge badge-online">200</span></td><td>Message envoyé.</td></tr>
-        <tr><td><span class="badge badge-muted">400</span></td><td>Requête invalide (champ manquant, message trop long).</td></tr>
-        <tr><td><span class="badge badge-danger">401</span></td><td>Clé API invalide ou révoquée.</td></tr>
-        <tr><td><span class="badge badge-danger">429</span></td><td>Limite de débit atteinte. ({{ limit }}/minutes <i class='bx bx-shield-quarter' style='color:#ffffff' ></i> Ddos protection)</td></tr>
-        <tr><td><span class="badge badge-danger">502</span></td><td>Le bot n'a pas pu délivrer le DM (utilisateur non joignable).</td></tr>
+        <tr><td><span class="badge badge-online">200</span></td><td data-i18n="resp_200">Message envoyé.</td></tr>
+        <tr><td><span class="badge badge-muted">400</span></td><td data-i18n="resp_400">Requête invalide (champ manquant, message trop long).</td></tr>
+        <tr><td><span class="badge badge-danger">401</span></td><td data-i18n="resp_401">Clé API invalide ou révoquée.</td></tr>
+        <tr><td><span class="badge badge-danger">429</span></td><td><span data-i18n="resp_429">Limite de débit atteinte.</span> ({{ limit }}/minutes <i class='bx bx-shield-quarter' style='color:#ffffff' ></i> <span data-i18n="resp_429_suffix">Protection DDoS.</span>)</td></tr>
+        <tr><td><span class="badge badge-danger">502</span></td><td data-i18n="resp_502">Le bot n'a pas pu délivrer le DM (utilisateur non joignable).</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Exemples</h2>
+  <h2 data-i18n="docs_examples_title">Exemples</h2>
 
   <div class="tabs" data-tabs>
     <div class="tab-buttons">
@@ -74,10 +84,10 @@ response = requests.post(
 });</code></pre>
   </div>
 
-  <h2>Bon à savoir</h2>
+  <h2 data-i18n="docs_good_to_know">Bon à savoir</h2>
   <ul class="docs-list">
-    <li>Une clé révoquée depuis le dashboard cesse de fonctionner immédiatement.</li>
-    <li>Gardez vos clés hors de vos dépôts publics : traitez-les comme un mot de passe.</li>
+    <li data-i18n="docs_tip1">Une clé révoquée depuis le dashboard cesse de fonctionner immédiatement.</li>
+    <li data-i18n="docs_tip2">Gardez vos clés hors de vos dépôts publics : traitez-les comme un mot de passe.</li>
   </ul>
 
 </section>

@@ -13,10 +13,10 @@
 {% if new_key %}
 <section class="wrap">
   <div class="alert alert-success">
-    <strong>Nouvelle clé générée.</strong> Copiez-la maintenant&nbsp;: elle ne sera plus jamais affichée en clair.
+    <strong data-i18n="dash_alert_title">Nouvelle clé générée.</strong> <span data-i18n="dash_alert_text">Copiez-la maintenant : elle ne sera plus jamais affichée en clair.</span>
     <div class="key-reveal">
       <code id="new-key-value">{{ new_key }}</code>
-      <button class="btn btn-ghost btn-sm" type="button" data-copy="{{ new_key }}">Copier</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-copy="{{ new_key }}" data-i18n="btn_copy">Copier</button>
     </div>
   </div>
 </section>
@@ -26,18 +26,24 @@
 
   <div class="panel">
     <div class="panel-head">
-      <h2>Clés API</h2>
+      <h2 data-i18n="dash_keys_title">Clés API</h2>
     </div>
 
     <form class="inline-form" method="post" action="{{ url_for('create_key') }}">
-      <input type="text" name="name" placeholder="Nom de la clé (ex: serveur prod)" maxlength="60">
-      <button class="btn btn-primary btn-sm" type="submit">Générer</button>
+      <input type="text" name="name" placeholder="Nom de la clé (ex: serveur prod)" data-i18n-placeholder="dash_keys_placeholder" maxlength="60">
+      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_generate">Générer</button>
     </form>
 
     {% if keys %}
     <table class="table">
       <thead>
-        <tr><th>Nom</th><th>Clé</th><th>Créée</th><th>Statut</th><th></th></tr>
+        <tr>
+          <th data-i18n="th_name">Nom</th>
+          <th data-i18n="th_key">Clé</th>
+          <th data-i18n="th_created">Créée</th>
+          <th data-i18n="th_status">Statut</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
         {% for k in keys %}
@@ -47,16 +53,16 @@
           <td class="mono">{{ k['created_at'][:10] }}</td>
           <td>
             {% if k['revoked_at'] %}
-              <span class="badge badge-muted">Révoquée</span>
+              <span class="badge badge-muted" data-i18n="badge_revoked">Révoquée</span>
             {% else %}
-              <span class="badge badge-online">Active</span>
+              <span class="badge badge-online" data-i18n="badge_active">Active</span>
             {% endif %}
           </td>
           <td>
             {% if not k['revoked_at'] %}
             <form method="post" action="{{ url_for('revoke_key', key_id=k['id']) }}"
                   onsubmit="return confirm('Révoquer cette clé ? Elle cessera de fonctionner immédiatement.');">
-              <button class="btn btn-danger btn-sm" type="submit">Révoquer</button>
+              <button class="btn btn-danger btn-sm" type="submit" data-i18n="btn_revoke">Révoquer</button>
             </form>
             {% endif %}
           </td>
@@ -65,13 +71,13 @@
       </tbody>
     </table>
     {% else %}
-    <p class="empty-state">Aucune clé pour le moment. Générez-en une pour commencer à envoyer des notifications.</p>
+    <p class="empty-state" data-i18n="dash_no_keys">Aucune clé pour le moment. Générez-en une pour commencer à envoyer des notifications.</p>
     {% endif %}
   </div>
 
   <div class="panel">
     <div class="panel-head">
-      <h2>Dernières notifications</h2>
+      <h2 data-i18n="dash_notifs_title">Dernières notifications</h2>
     </div>
 
     {% if notifications %}
@@ -90,7 +96,7 @@
       {% endfor %}
     </ul>
     {% else %}
-    <p class="empty-state">Aucune notification envoyée pour l'instant.</p>
+    <p class="empty-state" data-i18n="dash_no_notifs">Aucune notification envoyée pour l'instant.</p>
     {% endif %}
   </div>
 

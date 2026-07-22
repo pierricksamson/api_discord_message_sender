@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -22,18 +23,36 @@
     </a>
 
     <nav class="mainnav">
+      <div class="lang-selector">
+        <button type="button" class="lang-btn" id="langToggle" aria-haspopup="true" aria-expanded="false">
+            <span class="fi fi-fr" id="currentFlag"></span>
+            <span class="lang-code" id="currentLang">FR</span>
+            <box-icon name='chevron-down' color="#8b93a7" size="xs"></box-icon>
+        </button>
+        
+        <div class="lang-dropdown" id="langDropdown">
+            <button type="button" class="lang-option active" data-lang="fr" data-flag="fi-fr">
+            <span class="fi fi-fr"></span>
+            <span>Français</span>
+            </button>
+            <button type="button" class="lang-option" data-lang="en" data-flag="fi-us">
+            <span class="fi fi-us"></span>
+            <span>English</span>
+            </button>
+        </div>
+    </div>
       <a href="https://github.com/pierricksamson/relay"><box-icon type='logo' name='github' color="#8b93a7" style='font-size: 26px;'></box-icon></a>
-      <a href="{{ url_for('docs') }}">Docs</a>
+      <a href="{{ url_for('docs') }}" data-i18n="nav_docs">Docs</a>
       {% set u = current_user() %}
       {% if u %}
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('dashboard') }}" data-i18n="nav_dashboard">Dashboard</a>
         <a class="navuser" href="{{ url_for('dashboard') }}">
           <img src="{{ avatar_url(u['discord_id'], u['avatar']) }}" alt="" class="navavatar">
           <span>{{ u['username'] }}</span>
         </a>
-        <a class="btn btn-ghost btn-sm" href="{{ url_for('logout') }}">Déconnexion</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('logout') }}" data-i18n="nav_logout">Déconnexion</a>
       {% else %}
-        <a class="btn btn-discord" href="{{ url_for('login') }}" style="color: white!important;">Se connecter avec Discord</a>
+        <a class="btn btn-discord" href="{{ url_for('login') }}" style="color: white!important;" data-i18n="nav_login_discord">Se connecter avec Discord</a>
       {% endif %}
     </nav>
   </div>
@@ -45,10 +64,11 @@
 
 <footer class="sitefooter">
   <div class="wrap footer-inner">
-    <span>Relay — un relais de notifications, pas un réseau social.</span>
+    <span data-i18n="footer_tagline">Relay — un relais de notifications, pas un réseau social.</span>
+    <span data-i18n="footer_trans"></span>
     <span class="footer-links">
       <a href="https://github.com/pierricksamson/relay"><box-icon type='logo' name='github' color="#8b93a7"></box-icon></a>
-      <a href="{{ url_for('docs') }}">Documentation</a>
+      <a href="{{ url_for('docs') }}" data-i18n="footer_docs">Documentation</a>
       <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>
     </span>
   </div>
