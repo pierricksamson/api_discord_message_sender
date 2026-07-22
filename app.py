@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 from dotenv import set_key
-from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for, Response
 
 import bot
 import database as db
@@ -71,6 +71,60 @@ def create_app() -> Flask:
         return render_template(
             "docs.html", base_url=Config.BASE_URL, limit=db.get_rate_limit_per_minute()
         )
+
+    # -----------------------------------------------------------------
+    # SEO : Robots.txt & Sitemap
+    # -----------------------------------------------------------------
+
+    @app.get("/robots.txt")
+    def robots():
+        """Sert le fichier robots.txt qui dit aux moteurs de recherche quoi regarder."""
+        # On bloque l'accès aux pages privées et à l'API pour éviter qu'elles soient indexées sur Google
+        lines = [
+            "User-agent: *",
+            "Disallow: /admin/",
+            "Disallow: /dashboard/",
+            "Disallow: /api/",
+            "Disallow: /login",
+            "Disallow: /callback",
+            "Disallow: /logout",
+            "",
+            # Indique dynamiquement l'URL de ton sitemap
+            f"Sitemap: {url_for('sitemap', _external=True)}"
+        ]
+        return Response("\n".join(lines), mimetype="text/plain")
+
+    @app.get("/sitemap.xml")
+    def sitemap():
+        """Génère le sitemap automatiquement à chaque requête."""
+        # Liste des pages publiques à indexer : (nom_de_la_fonction, priorité, fréquence_actualisation)
+        pages = [
+            ("index", 1.0, "weekly"),
+            ("docs", 0.8, "weekly"),
+            ("cgu", 0.5, "monthly")
+        ]
+
+        # Actualisation : on utilise la date d'aujourd'hui (format YYYY-MM-DD)
+        # Comme la route est dynamique, la date lastmod sera toujours récente !
+        lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+        xml_sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        xml_sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+        for endpoint, priority, changefreq in pages:
+            # _external=True permet d'avoir le lien complet (ex: https://tonsite.com/docs au lieu de juste /docs)
+            url = url_for(endpoint, _external=True)
+            xml_sitemap += '  <url>\n'
+            xml_sitemap += f'    <loc>{url}</loc>\n'
+            xml_sitemap += f'    <lastmod>{lastmod}</lastmod>\n'
+            xml_sitemap += f'    <changefreq>{changefreq}</changefreq>\n'
+            xml_sitemap += f'    <priority>{priority}</priority>\n'
+            xml_sitemap += '  </url>\n'
+
+        xml_sitemap += '</urlset>'
+
+        # On renvoie bien du XML pour que les navigateurs et les bots le comprennent
+        return Response(xml_sitemap, mimetype='application/xml')
 
     # -----------------------------------------------------------------
     # Discord OAuth2
