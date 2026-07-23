@@ -14,12 +14,12 @@ class Config:
     ENV_PATH = ENV_PATH
 
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
-    BASE_URL = os.environ.get("BASE_URL", "http://localhost:5000")
+    BASE_URL = os.environ.get("BASE_URL", "http://localhost:10001")
 
     DISCORD_CLIENT_ID = os.environ.get("DISCORD_CLIENT_ID", "")
     DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET", "")
     DISCORD_REDIRECT_URI = os.environ.get(
-        "DISCORD_REDIRECT_URI", "http://localhost:5000/callback"
+        "DISCORD_REDIRECT_URI", f"{BASE_URL}/callback"
     )
     DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "")
 
