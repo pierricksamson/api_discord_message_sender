@@ -43,11 +43,11 @@ Create a `.env` file at the project root with the following keys (see
 
 ```env
 SECRET_KEY=a-long-unpredictable-random-string
-BASE_URL=http://localhost:5000
+BASE_URL=http://localhost:10001
 
 DISCORD_CLIENT_ID=...
 DISCORD_CLIENT_SECRET=...
-DISCORD_REDIRECT_URI=http://localhost:5000/callback
+DISCORD_REDIRECT_URI=http://localhost:10001/callback
 DISCORD_BOT_TOKEN=...
 
 DATABASE_PATH=instance/app.db
@@ -71,7 +71,7 @@ python -c "import secrets; print(secrets.token_hex(32))"
 1. Go to the [Discord Developer Portal](https://discord.com/developers/applications)
    and create an application.
 2. **OAuth2** tab: grab `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET`, then
-   add `http://localhost:5000/callback` (or your production domain) to the
+   add `http://localhost:10001/callback` (or your production domain) to the
    **Redirects** list.
 3. **Bot** tab: create a bot, grab `DISCORD_BOT_TOKEN`. Enable the
    **Server Members Intent** (required for `fetch_user` in `bot.py`).
@@ -93,7 +93,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-The site is then available at `http://localhost:5000`. `db.init_db()`
+The site is then available at `http://localhost:10001`. `db.init_db()`
 automatically creates `instance/app.db` and its tables on first run —
 nothing to migrate by hand.
 
@@ -110,7 +110,7 @@ sqlite3 instance/app.db "UPDATE users SET admin = 1 WHERE discord_id = 'YOUR_DIS
 Once logged in and a key has been generated from `/dashboard`:
 
 ```bash
-curl -X POST http://localhost:5000/api/send \
+curl -X POST http://localhost:10001/api/send \
   -H "Content-Type: application/json" \
   -d '{"api_key": "pk_your_key", "message": "Test from curl"}'
 ```
