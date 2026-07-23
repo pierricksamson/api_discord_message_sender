@@ -35,6 +35,10 @@
 
 html { scroll-behavior: smooth; }
 
+html:not(.i18n-ready) body {
+  visibility: hidden;
+}
+
 body {
   margin: 0;
   background: var(--bg);

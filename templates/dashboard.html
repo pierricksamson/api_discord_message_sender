@@ -25,10 +25,10 @@
 {% if new_key %}
 <section class="wrap">
   <div class="alert alert-success">
-    <strong data-i18n="dash_alert_title">Nouvelle clé générée.</strong> <span data-i18n="dash_alert_text">Copiez-la maintenant : elle ne sera plus jamais affichée en clair.</span>
+    <strong data-i18n="dash_alert_title"></strong> <span data-i18n="dash_alert_text"></span>
     <div class="key-reveal">
       <code id="new-key-value">{{ new_key }}</code>
-      <button class="btn btn-ghost btn-sm" type="button" data-copy="{{ new_key }}" data-i18n="btn_copy">Copier</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-copy="{{ new_key }}" data-i18n="btn_copy"></button>
     </div>
   </div>
 </section>
@@ -38,27 +38,27 @@
 
   <div class="panel">
     <div class="panel-head">
-      <h2 data-i18n="dash_keys_title">Clés API</h2>
+      <h2 data-i18n="dash_keys_title"></h2>
     </div>
 
     <p class="key-limit-info mono">
-      {{ active_keys_count }} / {{ max_keys }} <span data-i18n="dash_keys_limit_label">clé(s) active(s)</span>
+      {{ active_keys_count }} / {{ max_keys }} <span data-i18n="dash_keys_limit_label"></span>
     </p>
 
     <form class="inline-form" method="post" action="{{ url_for('create_key') }}">
-      <input type="text" name="name" placeholder="Nom de la clé (ex: serveur prod)" data-i18n-placeholder="dash_keys_placeholder" maxlength="60">
+      <input type="text" name="name" data-i18n-placeholder="dash_keys_placeholder" maxlength="60">
       <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_generate"
-              {{ 'disabled' if active_keys_count >= max_keys else '' }}>Générer</button>
+              {{ 'disabled' if active_keys_count >= max_keys else '' }}></button>
     </form>
 
     {% if keys %}
     <table class="table">
       <thead>
         <tr>
-          <th data-i18n="th_name">Nom</th>
-          <th data-i18n="th_key">Clé</th>
-          <th data-i18n="th_created">Créée</th>
-          <th data-i18n="th_status">Statut</th>
+          <th data-i18n="th_name"></th>
+          <th data-i18n="th_key"></th>
+          <th data-i18n="th_created"></th>
+          <th data-i18n="th_status"></th>
           <th></th>
         </tr>
       </thead>
@@ -70,9 +70,9 @@
           <td class="mono">{{ k['created_at'][:10] }}</td>
           <td>
             {% if k['revoked_at'] %}
-              <span class="badge badge-muted" data-i18n="badge_revoked">Révoquée</span>
+              <span class="badge badge-muted" data-i18n="badge_revoked"></span>
             {% else %}
-              <span class="badge badge-online" data-i18n="badge_active">Active</span>
+              <span class="badge badge-online" data-i18n="badge_active"></span>
             {% endif %}
           </td>
           <td>
@@ -81,7 +81,7 @@
                   class="js-confirm-form"
                   data-confirm-text="confirm_revoke_key"
                   data-confirm-fallback="Révoquer cette clé ? Elle cessera de fonctionner immédiatement.">
-              <button class="btn btn-danger btn-sm" type="submit" data-i18n="btn_revoke">Révoquer</button>
+              <button class="btn btn-danger btn-sm" type="submit" data-i18n="btn_revoke"></button>
             </form>
             {% endif %}
           </td>
@@ -90,13 +90,13 @@
       </tbody>
     </table>
     {% else %}
-    <p class="empty-state" data-i18n="dash_no_keys">Aucune clé pour le moment. Générez-en une pour commencer à envoyer des notifications.</p>
+    <p class="empty-state" data-i18n="dash_no_keys"></p>
     {% endif %}
   </div>
 
   <div class="panel">
     <div class="panel-head">
-      <h2 data-i18n="dash_notifs_title">Dernières notifications</h2>
+      <h2 data-i18n="dash_notifs_title"></h2>
     </div>
 
     {% if notifications %}
@@ -115,7 +115,7 @@
       {% endfor %}
     </ul>
     {% else %}
-    <p class="empty-state" data-i18n="dash_no_notifs">Aucune notification envoyée pour l'instant.</p>
+    <p class="empty-state" data-i18n="dash_no_notifs"></p>
     {% endif %}
   </div>
 
@@ -124,28 +124,21 @@
 <section class="wrap">
   <div class="panel panel-danger">
     <div class="panel-head">
-      <h2 data-i18n="dash_danger_title">Zone dangereuse</h2>
+      <h2 data-i18n="dash_danger_title"></h2>
     </div>
-    <p data-i18n="dash_danger_desc">
-      Supprime définitivement votre compte, vos clés API et tout votre historique de
-      notifications. Cette action est irréversible.
-    </p>
+    <p data-i18n="dash_danger_desc"></p>
 
     <details class="danger-details">
-      <summary class="btn btn-danger btn-sm" data-i18n="btn_delete_account">Supprimer toutes mes données</summary>
+      <summary class="btn btn-danger btn-sm" data-i18n="btn_delete_account"></summary>
 
       <form class="delete-form js-confirm-form" method="post" action="{{ url_for('delete_account') }}"
             data-confirm-text="confirm_delete_account"
             data-confirm-fallback="Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?">
 
-        <label class="delete-label" data-i18n="dash_confirm_label">
-          Tapez SUPPRIMER pour confirmer
-        </label>
+        <label class="delete-label" data-i18n="dash_confirm_label"></label>
         <input type="text" name="confirm_text" autocomplete="off" placeholder="SUPPRIMER" required>
 
-        <button class="btn btn-danger" type="submit" data-i18n="btn_confirm_delete">
-          Confirmer la suppression définitive
-        </button>
+        <button class="btn btn-danger" type="submit" data-i18n="btn_confirm_delete"></button>
       </form>
     </details>
   </div>

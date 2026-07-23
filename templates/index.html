@@ -6,21 +6,17 @@
     <div class="alert alert-danger">{{ oauth_error }}</div>
   {% endif %}
 
-  <p class="eyebrow" data-i18n="hero_eyebrow">Une ligne de code entre vos scripts et votre DM Discord</p>
-  <h1 class="hero-title" data-i18n="hero_title">Vos scripts parlent.<br>Discord écoute.</h1>
-  <p class="hero-sub" data-i18n="hero_sub">
-    Relay est un relais minimal : une clé API, un endpoint, un message privé
-    qui arrive sur Discord. Pas de compte à créer, pas de serveur à configurer.
-    Permet de recevoir facilement les alertes de vos propres applications, scripts ou codes directement sur Discord
-  </p>
+  <p class="eyebrow" data-i18n="hero_eyebrow"></p>
+  <h1 class="hero-title" data-i18n="hero_title"></h1>
+  <p class="hero-sub" data-i18n="hero_sub"></p>
 
   <div class="hero-cta">
     {% if current_user() %}
-      <a class="btn btn-primary" href="{{ url_for('dashboard') }}" data-i18n="cta_dashboard">Aller au dashboard</a>
+      <a class="btn btn-primary" href="{{ url_for('dashboard') }}" data-i18n="cta_dashboard"></a>
     {% else %}
-      <a class="btn btn-discord" href="{{ url_for('login') }}" data-i18n="cta_login">Se connecter avec Discord</a>
+      <a class="btn btn-discord" href="{{ url_for('login') }}" data-i18n="cta_login"></a>
     {% endif %}
-    <a class="btn btn-ghost" href="{{ url_for('docs') }}" data-i18n="cta_docs">Voir la documentation</a>
+    <a class="btn btn-ghost" href="{{ url_for('docs') }}" data-i18n="cta_docs"></a>
   </div>
 
   <div class="relay" aria-hidden="true">
@@ -30,38 +26,38 @@
     <div class="relay-stops">
       <div class="relay-stop">
         <div class="relay-icon">
-          <box-icon name='code-alt' color="var(--accent-strong)" ></box-icon>
+          <box-icon name='code-alt' color="var(--accent-strong)"></box-icon>
         </div>
-        <span class="relay-label" data-i18n="relay_stop1_label">Votre script</span>
+        <span class="relay-label" data-i18n="relay_stop1_label"></span>
         <code class="relay-sub">requests.post(...)</code>
       </div>
       <div class="relay-stop">
         <div class="relay-icon">
-          <box-icon name='flask' type='logo' color="var(--accent-strong)" ></box-icon>
+          <box-icon name='flask' type='logo' color="var(--accent-strong)"></box-icon>
         </div>
-        <span class="relay-label" data-i18n="relay_stop2_label">API Relay</span>
+        <span class="relay-label" data-i18n="relay_stop2_label"></span>
         <code class="relay-sub">POST /api/send</code>
       </div>
       <div class="relay-stop">
         <div class="relay-icon">
-          <box-icon name='python' type='logo' color="var(--accent-strong)" ></box-icon>
+          <box-icon name='python' type='logo' color="var(--accent-strong)"></box-icon>
         </div>
-        <span class="relay-label" data-i18n="relay_stop3_label">Traitement</span>
+        <span class="relay-label" data-i18n="relay_stop3_label"></span>
         <code class="relay-sub">user.send(embed=embed)</code>
       </div>
       <div class="relay-stop">
         <div class="relay-icon">
-          <box-icon name='discord-alt' type='logo' color="var(--accent-strong)" ></box-icon>
+          <box-icon name='discord-alt' type='logo' color="var(--accent-strong)"></box-icon>
         </div>
-        <span class="relay-label" data-i18n="relay_stop4_label">Bot Discord</span>
+        <span class="relay-label" data-i18n="relay_stop4_label"></span>
         <code class="relay-sub">discord.py</code>
       </div>
       <div class="relay-stop">
         <div class="relay-icon">
-          <box-icon name='message-error' color='var(--accent-strong)' ></box-icon>
+          <box-icon name='message-error' color='var(--accent-strong)'></box-icon>
         </div>
-        <span class="relay-label" data-i18n="relay_stop5_label">Votre DM</span>
-        <code class="relay-sub" data-i18n="relay_stop5_sub">reçu ✔</code>
+        <span class="relay-label" data-i18n="relay_stop5_label"></span>
+        <code class="relay-sub" data-i18n="relay_stop5_sub"></code>
       </div>
     </div>
   </div>
@@ -70,23 +66,23 @@
 <section class="wrap features">
   <div class="feature-card">
     <span class="feature-num">01</span>
-    <h3 data-i18n="feat1_title">Connexion Discord uniquement</h3>
-    <p data-i18n="feat1_desc">Pas de mot de passe à gérer. Votre identité, c'est votre compte Discord — Relay récupère votre ID, votre pseudo et votre avatar, rien de plus.</p>
+    <h3 data-i18n="feat1_title"></h3>
+    <p data-i18n="feat1_desc"></p>
   </div>
   <div class="feature-card">
     <span class="feature-num">02</span>
-    <h3 data-i18n="feat2_title">Une clé, un endpoint</h3>
-    <p data-i18n="feat2_desc">Générez une clé <code>pk_...</code> depuis le dashboard et envoyez un <code>POST /api/send</code> depuis n'importe quel langage.</p>
+    <h3 data-i18n="feat2_title"></h3>
+    <p data-i18n="feat2_desc"></p>
   </div>
   <div class="feature-card">
     <span class="feature-num">03</span>
-    <h3 data-i18n="feat3_title">Historique clair</h3>
-    <p data-i18n="feat3_desc">Chaque notification envoyée, réussie ou échouée, reste consultable dans votre dashboard.</p>
+    <h3 data-i18n="feat3_title"></h3>
+    <p data-i18n="feat3_desc"></p>
   </div>
 </section>
 
 <section class="wrap codeblock-section">
-  <h2 data-i18n="code_section_title">En pratique</h2>
+  <h2 data-i18n="code_section_title"></h2>
   <pre class="codeblock"><code><span class="tok-kw">import</span> requests
 
 requests.post(

@@ -4,31 +4,31 @@
 
 <section class="wrap dash-head">
   <div>
-    <h1 class="dash-name" data-i18n="admin_title">Dashboard admin</h1>
-    <p class="dash-id mono" data-i18n="admin_subtitle">Vue d'ensemble et réglages globaux</p>
+    <h1 class="dash-name" data-i18n="admin_title"></h1>
+    <p class="dash-id mono" data-i18n="admin_subtitle"></p>
   </div>
 </section>
 
 <section class="wrap admin-stats-grid">
   <div class="stat-card">
     <span class="stat-num">{{ stats.total_users }}</span>
-    <span class="stat-label" data-i18n="admin_stat_users">Utilisateurs</span>
+    <span class="stat-label" data-i18n="admin_stat_users"></span>
   </div>
   <div class="stat-card">
     <span class="stat-num">{{ stats.active_keys }}</span>
-    <span class="stat-label" data-i18n="admin_stat_active_keys">Clés actives</span>
+    <span class="stat-label" data-i18n="admin_stat_active_keys"></span>
   </div>
   <div class="stat-card">
     <span class="stat-num">{{ stats.revoked_keys }}</span>
-    <span class="stat-label" data-i18n="admin_stat_revoked_keys">Clés révoquées</span>
+    <span class="stat-label" data-i18n="admin_stat_revoked_keys"></span>
   </div>
   <div class="stat-card">
     <span class="stat-num">{{ stats.total_sent }}</span>
-    <span class="stat-label" data-i18n="admin_stat_sent">Notifs envoyées</span>
+    <span class="stat-label" data-i18n="admin_stat_sent"></span>
   </div>
   <div class="stat-card">
     <span class="stat-num">{{ stats.total_failed }}</span>
-    <span class="stat-label" data-i18n="admin_stat_failed">Notifs échouées</span>
+    <span class="stat-label" data-i18n="admin_stat_failed"></span>
   </div>
 </section>
 
@@ -36,7 +36,7 @@
 
   <div class="panel">
     <div class="panel-head">
-      <h2 data-i18n="admin_chart_title">Notifications (14 derniers jours)</h2>
+      <h2 data-i18n="admin_chart_title"></h2>
     </div>
 
     {% if stats.daily %}
@@ -45,7 +45,7 @@
       {% set peak = ([sent_values | max, failed_values | max, 1]) | max %}
       <div class="bar-chart">
         {% for d in stats.daily %}
-        <div class="bar-col" title="{{ d.day }} — {{ d.sent }} envoyées, {{ d.failed }} échouées">
+        <div class="bar-col" title="{{ d.day }} — {{ d.sent }} / {{ d.failed }}">
           <div class="bar-stack">
             <span class="bar bar-sent" style="height: {{ (d.sent / peak * 100) | round(1) }}%"></span>
             <span class="bar bar-failed" style="height: {{ (d.failed / peak * 100) | round(1) }}%"></span>
@@ -55,26 +55,26 @@
         {% endfor %}
       </div>
       <div class="bar-legend">
-        <span><i class="legend-dot legend-sent"></i> <span data-i18n="admin_legend_sent">Envoyées</span></span>
-        <span><i class="legend-dot legend-failed"></i> <span data-i18n="admin_legend_failed">Échouées</span></span>
+        <span><i class="legend-dot legend-sent"></i> <span data-i18n="admin_legend_sent"></span></span>
+        <span><i class="legend-dot legend-failed"></i> <span data-i18n="admin_legend_failed"></span></span>
       </div>
     {% else %}
-    <p class="empty-state" data-i18n="admin_no_data">Pas encore de données sur cette période.</p>
+    <p class="empty-state" data-i18n="admin_no_data"></p>
     {% endif %}
   </div>
 
   <div class="panel">
     <div class="panel-head">
-      <h2 data-i18n="admin_settings_title">Réglages globaux</h2>
+      <h2 data-i18n="admin_settings_title"></h2>
     </div>
     <form class="settings-form" method="post" action="{{ url_for('admin_update_settings') }}">
-      <label data-i18n="admin_setting_rate_limit">Limite d'envois par minute (par utilisateur)</label>
+      <label data-i18n="admin_setting_rate_limit"></label>
       <input type="number" name="rate_limit_per_minute" min="0" value="{{ rate_limit }}">
 
-      <label data-i18n="admin_setting_max_keys">Nombre max de clés API actives par utilisateur</label>
+      <label data-i18n="admin_setting_max_keys"></label>
       <input type="number" name="max_api_keys_per_user" min="1" value="{{ max_keys }}">
 
-      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_save_settings">Enregistrer</button>
+      <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_save_settings"></button>
     </form>
   </div>
 
@@ -83,17 +83,17 @@
 <section class="wrap">
   <div class="panel">
     <div class="panel-head">
-      <h2 data-i18n="admin_users_title">Utilisateurs</h2>
+      <h2 data-i18n="admin_users_title"></h2>
     </div>
     <table class="table">
       <thead>
         <tr>
-          <th data-i18n="th_username">Pseudo</th>
-          <th data-i18n="th_discord_id">Discord ID</th>
-          <th data-i18n="th_keys">Clés actives</th>
-          <th data-i18n="th_notifs">Notifs</th>
-          <th data-i18n="th_admin">Admin</th>
-          <th data-i18n="th_created">Créé</th>
+          <th data-i18n="th_username"></th>
+          <th data-i18n="th_discord_id"></th>
+          <th data-i18n="th_keys"></th>
+          <th data-i18n="th_notifs"></th>
+          <th data-i18n="th_admin"></th>
+          <th data-i18n="th_created"></th>
         </tr>
       </thead>
       <tbody>

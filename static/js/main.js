@@ -1,5 +1,61 @@
-// Traductions courantes, accessibles depuis toute la page (ex: modale de confirmation)
 let currentTranslations = {};
+
+// ---------------------------------------------------------------------
+// i18n : les traductions sont injectées côté serveur dans window.I18N_DATA
+// (voir base.html) -> plus de fetch(), application synchrone et immédiate.
+// ---------------------------------------------------------------------
+
+function applyLanguage(lang) {
+  const dict = (window.I18N_DATA && (window.I18N_DATA[lang] || window.I18N_DATA.fr)) || {};
+  currentTranslations = dict;
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.dataset.i18n;
+    if (dict[key]) element.innerHTML = dict[key];
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    const key = element.dataset.i18nPlaceholder;
+    if (dict[key]) element.placeholder = dict[key];
+  });
+
+  try {
+    localStorage.setItem("app_lang", lang);
+  } catch (err) {
+    /* stockage indisponible (navigation privée) : pas bloquant */
+  }
+
+  // Révèle la page une fois la traduction posée
+  document.documentElement.classList.add("i18n-ready");
+}
+
+function updateLangUI(lang, flagClass) {
+  const currentFlag = document.getElementById("currentFlag");
+  const currentLang = document.getElementById("currentLang");
+  const options = document.querySelectorAll(".lang-option");
+
+  if (currentFlag) currentFlag.className = `fi ${flagClass}`;
+  if (currentLang) currentLang.textContent = lang.toUpperCase();
+
+  options.forEach((opt) => {
+    opt.classList.toggle("active", opt.dataset.lang === lang);
+  });
+}
+
+// Exécuté dès que ce script est atteint : comme il est chargé en fin de
+// <body>, tout le DOM existe déjà -> pas besoin d'attendre DOMContentLoaded
+// pour poser la traduction le plus tôt possible.
+(function initLanguage() {
+  let saved = null;
+  try {
+    saved = localStorage.getItem("app_lang");
+  } catch (err) {
+    saved = null;
+  }
+  const lang = saved || (navigator.language.startsWith("fr") ? "fr" : "en");
+  updateLangUI(lang, lang === "fr" ? "fi-fr" : "fi-us");
+  applyLanguage(lang);
+})();
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- 1. Onglets de la page /docs (Python / cURL / JavaScript) ---
@@ -23,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await navigator.clipboard.writeText(value);
         const original = btn.textContent;
-        btn.textContent = "Copié !";
+        btn.textContent = currentTranslations["btn_copy"] ? "Copié !" : "Copied!";
         btn.disabled = true;
         setTimeout(() => {
           btn.textContent = original;
@@ -35,20 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- 3. Sélecteur de langue ---
+  // --- 3. Sélecteur de langue (interactions) ---
   const toggleBtn = document.getElementById("langToggle");
   const dropdown = document.getElementById("langDropdown");
   const options = document.querySelectorAll(".lang-option");
 
   if (toggleBtn && dropdown) {
-    // Ouvrir / fermer le menu
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       const isOpen = dropdown.classList.toggle("show");
       toggleBtn.setAttribute("aria-expanded", isOpen);
     });
 
-    // Sélectionner une langue
     options.forEach((option) => {
       option.addEventListener("click", () => {
         const lang = option.dataset.lang;
@@ -57,11 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
         updateLangUI(lang, flagClass);
         dropdown.classList.remove("show");
         toggleBtn.setAttribute("aria-expanded", "false");
-        loadLanguage(lang);
+        applyLanguage(lang);
       });
     });
 
-    // Fermer le menu en cliquant dehors
     document.addEventListener("click", (e) => {
       if (!toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.remove("show");
@@ -70,21 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- 4. Initialisation de la langue (localStorage -> navigateur -> 'fr') ---
-  const savedLang =
-    localStorage.getItem("app_lang") ||
-    (navigator.language.startsWith("fr") ? "fr" : "en");
-
-  const initialOption =
-    document.querySelector(`.lang-option[data-lang="${savedLang}"]`) ||
-    document.querySelector(".lang-option");
-
-  if (initialOption) {
-    updateLangUI(savedLang, initialOption.dataset.flag);
-  }
-  loadLanguage(savedLang);
-
-  // --- 5. Modale de confirmation (remplace window.confirm natif) ---
+  // --- 4. Modale de confirmation (remplace window.confirm natif) ---
   const confirmOverlay = document.getElementById("confirmModalOverlay");
   const confirmMessageEl = document.getElementById("confirmModalMessage");
   const confirmBtn = document.getElementById("confirmModalConfirm");
@@ -138,49 +177,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-// Met à jour le drapeau et le code dans le bouton
-function updateLangUI(lang, flagClass) {
-  const currentFlag = document.getElementById("currentFlag");
-  const currentLang = document.getElementById("currentLang");
-  const options = document.querySelectorAll(".lang-option");
-
-  if (currentFlag) currentFlag.className = `fi ${flagClass}`;
-  if (currentLang) currentLang.textContent = lang.toUpperCase();
-
-  options.forEach((opt) => {
-    opt.classList.toggle("active", opt.dataset.lang === lang);
-  });
-}
-
-// Charge le fichier JSON de traduction et l'applique à la page
-async function loadLanguage(lang) {
-  try {
-    const response = await fetch(`/static/lang/${lang}.json`);
-    if (!response.ok) return;
-
-    const translations = await response.json();
-    currentTranslations = translations;
-
-    // Sauvegarde du choix dans le navigateur
-    localStorage.setItem("app_lang", lang);
-
-    // Mise à jour du texte HTML
-    document.querySelectorAll("[data-i18n]").forEach((element) => {
-      const key = element.dataset.i18n;
-      if (translations[key]) {
-        element.innerHTML = translations[key];
-      }
-    });
-
-    // Mise à jour des placeholders d'inputs
-    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-      const key = element.dataset.i18nPlaceholder;
-      if (translations[key]) {
-        element.placeholder = translations[key];
-      }
-    });
-  } catch (err) {
-    console.error("Erreur lors du chargement du fichier de langue :", err);
-  }
-}

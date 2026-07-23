@@ -2,6 +2,7 @@ import os
 import secrets
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+import json
 
 from dotenv import set_key
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for, Response
@@ -23,6 +24,16 @@ def create_app() -> Flask:
     # -----------------------------------------------------------------
     # Helpers
     # -----------------------------------------------------------------
+
+    def load_i18n() -> dict:
+        data = {}
+        lang_dir = os.path.join(app.static_folder, "lang")
+        for lang in ("fr", "en"):
+            with open(os.path.join(lang_dir, f"{lang}.json"), encoding="utf-8") as f:
+                data[lang] = json.load(f)
+        return data
+
+    app.jinja_env.globals["i18n_data"] = load_i18n()
 
     def current_user():
         user_id = session.get("user_id")
