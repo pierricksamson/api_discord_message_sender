@@ -52,8 +52,19 @@ function updateLangUI(lang, flagClass) {
   } catch (err) {
     saved = null;
   }
-  const lang = saved || (navigator.language.startsWith("fr") ? "fr" : "en");
-  updateLangUI(lang, lang === "fr" ? "fi-fr" : "fi-us");
+
+  // Détecte fr, es ou en (défaut: en)
+  const browserLang = navigator.language.slice(0, 2);
+  const lang = saved || (["fr", "es", "en"].includes(browserLang) ? browserLang : "en");
+
+  // Dictionnaire des drapeaux
+  const flagMap = {
+    fr: "fi-fr",
+    en: "fi-us",
+    es: "fi-es"
+  };
+
+  updateLangUI(lang, flagMap[lang] || "fi-us");
   applyLanguage(lang);
 })();
 
@@ -73,23 +84,31 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- 2. Bouton "Copier" (clé API révélée dans le dashboard) ---
-  document.querySelectorAll("[data-copy]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const value = btn.getAttribute("data-copy");
-      try {
-        await navigator.clipboard.writeText(value);
-        const original = btn.textContent;
-        btn.textContent = currentTranslations["btn_copy"] !== "Copy" ? "Copié !" : "Copied!";
-        btn.disabled = true;
-        setTimeout(() => {
-          btn.textContent = original;
-          btn.disabled = false;
-        }, 1500);
-      } catch (err) {
-        console.error("Impossible de copier la clé :", err);
-      }
-    });
+document.querySelectorAll("[data-copy]").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const value = btn.getAttribute("data-copy");
+    try {
+      await navigator.clipboard.writeText(value);
+      const original = btn.textContent;
+
+      const langMessages = {
+        fr: "Copié !",
+        en: "Copied!",
+        es: "¡Copiado!"
+      };
+      const currentLang = localStorage.getItem("app_lang") || "fr";
+
+      btn.textContent = langMessages[currentLang] || "Copied!";
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.disabled = false;
+      }, 1500);
+    } catch (err) {
+      console.error("Impossible de copier la clé :", err);
+    }
   });
+});
 
   // --- 3. Sélecteur de langue (interactions) ---
   const toggleBtn = document.getElementById("langToggle");

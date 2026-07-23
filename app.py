@@ -47,7 +47,7 @@ def create_app() -> Flask:
     def load_i18n() -> dict:
         data = {}
         lang_dir = os.path.join(app.static_folder, "lang")
-        for lang in ("fr", "en"):
+        for lang in ("fr", "en", "es"):
             with open(os.path.join(lang_dir, f"{lang}.json"), encoding="utf-8") as f:
                 data[lang] = json.load(f)
         return data
