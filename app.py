@@ -13,6 +13,10 @@ import discord_oauth
 from config import Config
 
 
+def bilingual(fr: str, en: str) -> str:
+    return f"🇫🇷 {fr} / 🇺🇸 {en}"
+
+
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -233,9 +237,11 @@ def create_app() -> Flask:
         max_keys = db.get_max_api_keys_per_user()
         active = db.count_active_api_keys(user["id"])
         if active >= max_keys:
-            session["new_key_error"] = (
+            session["new_key_error"] = bilingual(
                 f"Limite atteinte : {max_keys} clé(s) active(s) maximum. "
-                "Révoquez une clé existante avant d'en générer une nouvelle."
+                "Révoquez une clé existante avant d'en générer une nouvelle.",
+                f"Limit reached: {max_keys} active key(s) maximum. "
+                "Revoke an existing key before generating a new one.",
             )
             return redirect(url_for("dashboard"))
 
@@ -251,8 +257,11 @@ def create_app() -> Flask:
         user = current_user()
         confirm_text = (request.form.get("confirm_text") or "").strip().upper()
 
-        if confirm_text != "SUPPRIMER":
-            session["delete_error"] = "Vous devez taper SUPPRIMER pour confirmer."
+        if confirm_text not in ["SUPPRIMER", "DELETE"]:
+            session["delete_error"] = bilingual(
+                "Vous devez taper SUPPRIMER pour confirmer.",
+                "You must type DELETE to confirm.",
+            )
             return redirect(url_for("dashboard"))
 
         db.delete_user_data(user["id"])
@@ -277,15 +286,27 @@ def create_app() -> Flask:
         message = payload.get("message")
 
         if not api_key or not isinstance(api_key, str):
-            return jsonify(error="Champ 'api_key' manquant ou invalide."), 400
+            return jsonify(error=bilingual(
+                "Champ 'api_key' manquant ou invalide.",
+                "Missing or invalid 'api_key' field.",
+            )), 400
         if not message or not isinstance(message, str):
-            return jsonify(error="Champ 'message' manquant ou invalide."), 400
+            return jsonify(error=bilingual(
+                "Champ 'message' manquant ou invalide.",
+                "Missing or invalid 'message' field.",
+            )), 400
         if len(message) > 2000:
-            return jsonify(error="Le message dépasse la limite Discord de 2000 caractères."), 400
+            return jsonify(error=bilingual(
+                "Le message dépasse la limite Discord de 2000 caractères.",
+                "Message exceeds Discord's 2000 character limit.",
+            )), 400
 
         auth = db.verify_api_key(api_key)
         if auth is None:
-            return jsonify(error="Clé API invalide ou révoquée."), 401
+            return jsonify(error=bilingual(
+                "Clé API invalide ou révoquée.",
+                "Invalid or revoked API key.",
+            )), 401
 
         user = auth["user"]
         api_key_id = auth["api_key_id"]
@@ -296,7 +317,10 @@ def create_app() -> Flask:
             since = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
             recent = db.count_recent_notifications(user["id"], since)
             if recent >= rate_limit:
-                return jsonify(error="Limite de débit atteinte, réessayez dans une minute."), 429
+                return jsonify(error=bilingual(
+                    "Limite de débit atteinte, réessayez dans une minute.",
+                    "Rate limit reached, try again in a minute.",
+                )), 429
 
         result = bot.send_dm(user["discord_id"], message, key_prefix=key_prefix)
 
@@ -309,7 +333,10 @@ def create_app() -> Flask:
         )
 
         if not result.ok:
-            return jsonify(error=result.error or "Échec de l'envoi."), 502
+            return jsonify(error=result.error or bilingual(
+                "Échec de l'envoi.",
+                "Send failed.",
+            )), 502
 
         return jsonify(status="sent"), 200
 

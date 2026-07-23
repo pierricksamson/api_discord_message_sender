@@ -49,7 +49,7 @@
   "dash_danger_title": "Danger zone",
   "dash_danger_desc": "Permanently deletes your account, your API keys, and your entire notification history. This action cannot be undone.",
   "btn_delete_account": "Delete all my data",
-  "dash_confirm_label": "Type SUPPRIMER (French for DELETE) to confirm",
+  "dash_confirm_label": "Type DELETE to confirm",
   "btn_confirm_delete": "Confirm permanent deletion",
 
   "nav_admin": "Admin",
@@ -139,5 +139,11 @@
   "cgu_s8_title": "8. Changes to the Terms",
   "cgu_s8_text": "Relay reserves the right to modify these Terms of Service at any time. Continued use of the service following modifications constitutes unreserved acceptance of the updated terms.",
   "cgu_s9_title": "9. Governing Law",
-  "cgu_s9_text": "These terms are governed by French law. In the event of a dispute and failing an amicable settlement, French courts shall have exclusive jurisdiction."
+  "cgu_s9_text": "These terms are governed by French law. In the event of a dispute and failing an amicable settlement, French courts shall have exclusive jurisdiction.",
+
+    "title_home": "Relay",
+    "title_docs": "Documentation — Relay",
+    "title_dashboard": "Dashboard — Relay",
+    "title_cgu": "Terms of Service — Relay",
+    "title_admin": "Admin — Relay"
 }

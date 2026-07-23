@@ -139,5 +139,11 @@
   "cgu_s8_title": "8. Modification des CGU",
   "cgu_s8_text": "Relay se réserve le droit de modifier à tout moment les présentes Conditions Générales d'Utilisation. L'utilisation continue du service après modification vaut acceptation sans réserve des nouvelles conditions.",
   "cgu_s9_title": "9. Droit Applicable",
-  "cgu_s9_text": "Les présentes conditions sont régies par le droit français. En cas de litige, et à défaut de résolution amiable, les tribunaux français seront seuls compétents."
+  "cgu_s9_text": "Les présentes conditions sont régies par le droit français. En cas de litige, et à défaut de résolution amiable, les tribunaux français seront seuls compétents.",
+
+    "title_home": "Relay",
+    "title_docs": "Documentation — Relay",
+    "title_dashboard": "Dashboard — Relay",
+    "title_cgu": "Conditions Générales d'Utilisation — Relay",
+    "title_admin": "Admin — Relay"
 }

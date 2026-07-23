@@ -80,7 +80,11 @@ def send_dm(
     if the notification is unexpected.
     """
     if _loop is None:
-        return SendResult(False, "Le bot Discord n'est pas démarré (token manquant ?).")
+        return SendResult(
+            False,
+            "🇫🇷 Le bot Discord n'est pas démarré (token manquant ?). / "
+            "🇺🇸 Discord bot is not running (missing token?).",
+        )
 
     async def _send():
         user = _client.get_user(int(discord_id))
@@ -88,7 +92,9 @@ def send_dm(
             try:
                 user = await _client.fetch_user(int(discord_id))
             except discord.NotFound:
-                raise RuntimeError("Utilisateur Discord introuvable.")
+                raise RuntimeError(
+                    "🇫🇷 Utilisateur Discord introuvable. / 🇺🇸 Discord user not found."
+                )
 
         embed = discord.Embed(description=message, color=discord.Color.blurple())
         if key_prefix:
@@ -104,13 +110,18 @@ def send_dm(
     except discord.Forbidden:
         return SendResult(
             False,
-            "Impossible d'envoyer un DM : l'utilisateur doit partager un serveur "
-            "avec le bot et autoriser les messages privés.",
+            "🇫🇷 Impossible d'envoyer un DM : l'utilisateur doit partager un serveur "
+            "avec le bot et autoriser les messages privés. / "
+            "🇺🇸 Could not send DM: the user must share a server with the bot "
+            "and allow direct messages.",
         )
     except discord.HTTPException as e:
-        return SendResult(False, f"Erreur Discord: {e}")
+        return SendResult(False, f"🇫🇷 Erreur Discord: {e} / 🇺🇸 Discord error: {e}")
     except asyncio.TimeoutError:
-        return SendResult(False, "Le bot n'a pas répondu à temps.")
+        return SendResult(
+            False,
+            "🇫🇷 Le bot n'a pas répondu à temps. / 🇺🇸 The bot did not respond in time.",
+        )
     except Exception as e:  # noqa: BLE001 - surfaced to the API caller
         return SendResult(False, str(e))
 

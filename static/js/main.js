@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await navigator.clipboard.writeText(value);
         const original = btn.textContent;
-        btn.textContent = currentTranslations["btn_copy"] ? "Copié !" : "Copied!";
+        btn.textContent = currentTranslations["btn_copy"] !== "Copy" ? "Copié !" : "Copied!";
         btn.disabled = true;
         setTimeout(() => {
           btn.textContent = original;

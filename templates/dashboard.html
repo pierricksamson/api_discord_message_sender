@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Dashboard — Relay{% endblock %}
+{% block title_key %}title_dashboard{% endblock %}
 {% block content %}
 
 <section class="wrap dash-head">
@@ -136,7 +136,7 @@
             data-confirm-fallback="Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?">
 
         <label class="delete-label" data-i18n="dash_confirm_label"></label>
-        <input type="text" name="confirm_text" autocomplete="off" placeholder="SUPPRIMER" required>
+        <input type="text" name="confirm_text" autocomplete="off" placeholder="" required>
 
         <button class="btn btn-danger" type="submit" data-i18n="btn_confirm_delete"></button>
       </form>
