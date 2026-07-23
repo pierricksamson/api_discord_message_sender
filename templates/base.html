@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-i18n="{% block title_key %}title_home{% endblock %}">{% block title %}Relay{% endblock %}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
+<link crossorigin="anonymous" rel="preconnect" href="https://fonts.googleapis.com">
+<link crossorigin="anonymous" rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link crossorigin="anonymous" integrity="sha384-42kyIPf7HDYLkGffmxDhSx/3Z/53wGBs3nD6wEFxsbeDc7rMO6mkYbkAcpRsnMU2" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link crossorigin="anonymous" integrity="sha384-mEneSLan5jEffu+TOnGhf+aAynm+K7RzMB0ADBpwxjXcj8txXEQ4+6PqBePn5CoW" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="icon" href="static/logo_transparent.png">
 <script>window.I18N_DATA = {{ i18n_data | tojson }};</script>
@@ -90,7 +90,7 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+<script crossorigin="anonymous" integrity="sha384-7mJOKdhjyvl9nulnWfxlDA9QTOGfRSIpUaFwjS79e4/QOPuafmAzqmYnsT+QEsu1" src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>

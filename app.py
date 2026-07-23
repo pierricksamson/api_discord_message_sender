@@ -6,6 +6,8 @@ import json
 
 from dotenv import set_key
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for, Response
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 import bot
 import src.database as db
@@ -28,6 +30,12 @@ def create_app() -> Flask:
     )
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024  # 64 Ko, large marge pour un message de 2000 caractères
     app.secret_key = Config.SECRET_KEY
+
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        storage_uri="memory://",
+    )
 
     db.init_db()
     bot.start_bot_in_background()
@@ -286,7 +294,11 @@ def create_app() -> Flask:
     # Public API
     # -----------------------------------------------------------------
 
+    def get_dynamic_rate_limit():
+        return f"{db.get_rate_limit_per_minute()} per minute"
+
     @app.post("/api/send")
+    @limiter.limit(get_dynamic_rate_limit) # Se réévalue à chaque requête !
     def api_send():
         payload = request.get_json(silent=True) or {}
         api_key = payload.get("api_key")
