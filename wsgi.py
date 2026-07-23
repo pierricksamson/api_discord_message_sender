@@ -1,10 +1,9 @@
 from waitress import serve
 from app import app
-from src.config import Config
 
 app.debug = False
 
-if Config.SECRET_KEY == "dev-secret-change-me":
+if app.secret_key == "dev-secret-change-me":
     raise RuntimeError('Please change secret for securtiy')
 
 if __name__ == "__main__":

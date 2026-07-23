@@ -14,12 +14,19 @@ from src.config import Config
 
 
 def bilingual(fr: str, en: str) -> str:
-    return f"🇫🇷 {fr} / 🇺🇸 {en}"
+    return f"🇺🇸 {en} / 🇫🇷 {fr}"
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.config.update(
+        SESSION_COOKIE_SECURE=True,      # jamais transmis en clair (HTTP)
+        SESSION_COOKIE_HTTPONLY=True,    # déjà le défaut Flask, à expliciter
+        SESSION_COOKIE_SAMESITE="Lax",   # limite les envois cross-site
+        PERMANENT_SESSION_LIFETIME=timedelta(days=12),
+    )
+    app.config["MAX_CONTENT_LENGTH"] = 64 * 1024  # 64 Ko, large marge pour un message de 2000 caractères
     app.secret_key = Config.SECRET_KEY
 
     db.init_db()
@@ -299,7 +306,7 @@ def create_app() -> Flask:
             return jsonify(error=bilingual(
                 "Le message dépasse la limite Discord de 2000 caractères.",
                 "Message exceeds Discord's 2000 character limit.",
-            )), 400
+            )), 413
 
         auth = db.verify_api_key(api_key)
         if auth is None:
