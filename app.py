@@ -169,11 +169,29 @@ def create_app() -> Flask:
                 400,
             )
 
-        user = db.upsert_user(
+        user, is_new = db.upsert_user(
             discord_id=discord_user["id"],
             username=discord_user.get("username", "inconnu"),
             avatar=discord_user.get("avatar"),
         )
+
+        if is_new:
+
+            message = """
+                        🇺🇸 - Your Relay account has been created
+                        🇫🇷 - Votre compte Relay à bien été créé
+                    """
+
+            result = bot.send_dm(user["discord_id"], message, key_prefix='server')
+            
+            db.log_notification(
+                user_id=user["id"],
+                api_key_id=None,
+                message=message,
+                status="sent" if result.ok else "failed",
+                error=None if result.ok else result.error,
+            )
+
         session["user_id"] = user["id"]
         return redirect(url_for("dashboard"))
 

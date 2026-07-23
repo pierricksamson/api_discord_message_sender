@@ -93,7 +93,7 @@ def get_db(db_path: str | None = None):
 # Users
 # ---------------------------------------------------------------------------
 
-def upsert_user(discord_id: str, username: str, avatar: str | None) -> sqlite3.Row:
+def upsert_user(discord_id: str, username: str, avatar: str | None) -> tuple[sqlite3.Row, bool]:
     """Create the user on first login, or refresh username/avatar on later ones."""
     with get_db() as db:
         existing = db.execute(
@@ -112,7 +112,7 @@ def upsert_user(discord_id: str, username: str, avatar: str | None) -> sqlite3.R
             )
         return db.execute(
             "SELECT * FROM users WHERE discord_id = ?", (discord_id,)
-        ).fetchone()
+        ).fetchone(), not existing
 
 
 def get_user(user_id: int) -> sqlite3.Row | None:
