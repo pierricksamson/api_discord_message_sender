@@ -46,6 +46,7 @@
     </p>
 
     <form class="inline-form" method="post" action="{{ url_for('create_key') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="text" name="name" data-i18n-placeholder="dash_keys_placeholder" maxlength="60">
       <button class="btn btn-primary btn-sm" type="submit" data-i18n="btn_generate"
               {{ 'disabled' if active_keys_count >= max_keys else '' }}></button>
@@ -81,6 +82,7 @@
                   class="js-confirm-form"
                   data-confirm-text="confirm_revoke_key"
                   data-confirm-fallback="Révoquer cette clé ? Elle cessera de fonctionner immédiatement.">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn btn-danger btn-sm" type="submit" data-i18n="btn_revoke"></button>
             </form>
             {% endif %}
@@ -134,6 +136,7 @@
       <form class="delete-form js-confirm-form" method="post" action="{{ url_for('delete_account') }}"
             data-confirm-text="confirm_delete_account"
             data-confirm-fallback="Dernière confirmation : ceci supprime définitivement votre compte et toutes vos données. Continuer ?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label class="delete-label" data-i18n="dash_confirm_label"></label>
         <input type="text" name="confirm_text" autocomplete="off" placeholder="" required>

@@ -50,6 +50,14 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at  TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS audit_log (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    action      TEXT NOT NULL,
+    details     TEXT,
+    created_at  TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_api_keys_prefix ON api_keys(key_prefix);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, created_at);
 """
@@ -266,6 +274,22 @@ def set_setting(key: str, value) -> None:
             (key, str(value)),
         )
 
+def log_audit(user_id: int | None, action: str, details: str | None = None) -> None:
+    """Journalise une action sensible (changement de réglages, suppression de compte, etc.)."""
+    with get_db() as db:
+        db.execute(
+            "INSERT INTO audit_log (user_id, action, details, created_at) VALUES (?, ?, ?, ?)",
+            (user_id, action, details, _now()),
+        )
+
+def list_audit_log(limit: int = 100) -> list[sqlite3.Row]:
+    with get_db() as db:
+        return db.execute(
+            "SELECT a.*, u.username FROM audit_log a "
+            "LEFT JOIN users u ON u.id = a.user_id "
+            "ORDER BY a.created_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
 
 def get_rate_limit_per_minute() -> int:
     """Limite de sends/minute par utilisateur : réglage admin, sinon valeur de config.py."""

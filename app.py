@@ -8,6 +8,8 @@ from dotenv import set_key
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for, Response
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_wtf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
 
 import bot
 import src.database as db
@@ -30,6 +32,8 @@ def create_app() -> Flask:
     )
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024  # 64 Ko, large marge pour un message de 2000 caractères
     app.secret_key = Config.SECRET_KEY
+    csrf = CSRFProtect(app)
+    app.jinja_env.globals["csrf_token"] = generate_csrf
 
     limiter = Limiter(
         get_remote_address,
@@ -83,6 +87,23 @@ def create_app() -> Flask:
 
     app.jinja_env.globals["current_user"] = current_user
     app.jinja_env.globals["avatar_url"] = discord_oauth.avatar_url
+
+    @app.after_request
+    def set_security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://unpkg.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com "
+            "https://cdn.jsdelivr.net https://unpkg.com; "
+            "font-src 'self' https://fonts.gstatic.com https://unpkg.com data:; "
+            "img-src 'self' data: blob: https://cdn.discordapp.com https://cdn.jsdelivr.net https://unpkg.com; "
+            "connect-src 'self' https: http: https://unpkg.com https://cdn.jsdelivr.net data: blob:;"
+        )
+        return response
 
     # -----------------------------------------------------------------
     # Public pages
@@ -279,6 +300,11 @@ def create_app() -> Flask:
             )
             return redirect(url_for("dashboard"))
 
+        db.log_audit(
+            user["id"],
+            "delete_account",
+            f"discord_id={user['discord_id']} username={user['username']}",
+        )
         db.delete_user_data(user["id"])
         session.clear()
         return redirect(url_for("index"))
@@ -298,6 +324,7 @@ def create_app() -> Flask:
         return f"{db.get_rate_limit_per_minute()} per minute"
 
     @app.post("/api/send")
+    @csrf.exempt
     @limiter.limit(get_dynamic_rate_limit) # Se réévalue à chaque requête !
     def api_send():
         payload = request.get_json(silent=True) or {}
@@ -377,22 +404,28 @@ def create_app() -> Flask:
     @app.post("/admin/settings")
     @admin_required
     def admin_update_settings():
+        user = current_user()
+        old_rate = db.get_rate_limit_per_minute()
+        old_max_keys = db.get_max_api_keys_per_user()
+
         rate_limit = (request.form.get("rate_limit_per_minute") or "").strip()
         max_keys = (request.form.get("max_api_keys_per_user") or "").strip()
 
         if rate_limit.isdigit():
             value = int(rate_limit)
-            db.set_setting("rate_limit_per_minute", value)
-            # Garde le .env synchronisé pour que la valeur survive à un redémarrage
-            # même si la table 'settings' venait à être vidée.
-            set_key(Config.ENV_PATH, "RATE_LIMIT_PER_MINUTE", str(value))
-            os.environ["RATE_LIMIT_PER_MINUTE"] = str(value)
+            if value != old_rate:
+                db.set_setting("rate_limit_per_minute", value)
+                set_key(Config.ENV_PATH, "RATE_LIMIT_PER_MINUTE", str(value))
+                os.environ["RATE_LIMIT_PER_MINUTE"] = str(value)
+                db.log_audit(user["id"], "update_rate_limit", f"{old_rate} -> {value}")
 
         if max_keys.isdigit() and int(max_keys) >= 1:
             value = int(max_keys)
-            db.set_setting("max_api_keys_per_user", value)
-            set_key(Config.ENV_PATH, "MAX_API_KEYS_PER_USER", str(value))
-            os.environ["MAX_API_KEYS_PER_USER"] = str(value)
+            if value != old_max_keys:
+                db.set_setting("max_api_keys_per_user", value)
+                set_key(Config.ENV_PATH, "MAX_API_KEYS_PER_USER", str(value))
+                os.environ["MAX_API_KEYS_PER_USER"] = str(value)
+                db.log_audit(user["id"], "update_max_keys", f"{old_max_keys} -> {value}")
 
         return redirect(url_for("admin_dashboard"))
 

@@ -68,6 +68,8 @@
       <h2 data-i18n="admin_settings_title"></h2>
     </div>
     <form class="settings-form" method="post" action="{{ url_for('admin_update_settings') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
       <label data-i18n="admin_setting_rate_limit"></label>
       <input type="number" name="rate_limit_per_minute" min="0" value="{{ rate_limit }}">
 
